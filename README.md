@@ -2,6 +2,8 @@
 
 Parallel Dilated CNN that classifies brain MRI scans into 4 classes: **glioma**, **meningioma**, **no tumor**, **pituitary**.
 
+**Best validation accuracy: 95.06%**
+
 ---
 
 ## Architecture
