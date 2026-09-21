@@ -34,7 +34,7 @@ Input (3, 224, 224)
 | Branches | 3 parallel, each: Conv(64→128→256→512) + GAP |
 | Dilation rates | 1 (local), 2 (medium), 3 (large) |
 | Classifier | 1536 → 512 → 128 → 4 |
-| Parameters | ~5.5M |
+| Parameters | ~12.6M |
 
 ---
 
