@@ -1,61 +1,69 @@
+"""
+Data Preparation Script
+
+Reads MRI images from DATASET/{split}/{class}/ and converts them into
+a single .pt file per split containing:
+    - images: (N, 3, 224, 224) float32, normalised to [0, 1]
+    - labels: (N,) long tensor
+"""
+
 import os
-from PIL import Image
-import torch
 import random
+
+import torch
+from PIL import Image
 from tqdm import tqdm
+
 IMAGE_SIZE = (224, 224)
-classes = {
+
+CLASS_MAP = {
     "glioma": 0,
     "meningioma": 1,
     "notumor": 2,
-    "pituitary": 3
+    "pituitary": 3,
 }
-for split in os.listdir("DATASET"):
-    split_path = os.path.join("DATASET", split)
-    images = []
-    labels = []
-    for category in tqdm(os.listdir(split_path), colour="red"):
-        category_path = os.path.join(split_path, category)
-        if category not in classes:
+
+
+def load_and_convert(split_path: str) -> tuple[torch.Tensor, torch.Tensor]:
+    images, labels = [], []
+
+    for class_name in tqdm(os.listdir(split_path), desc="Classes", colour="red"):
+        class_dir = os.path.join(split_path, class_name)
+        if class_name not in CLASS_MAP or not os.path.isdir(class_dir):
             continue
-        label = classes[category]
-        for image_name in tqdm(
-            os.listdir(category_path),
-            colour="green",
-            leave=False
-        ):
-            image_path = os.path.join(category_path, image_name)
-            if os.path.isfile(image_path):
-                try:
-                    img = Image.open(image_path).convert("RGB")
-                    img = img.resize(IMAGE_SIZE)
-                    img = torch.tensor(
-                        list(img.getdata()),
-                        dtype=torch.float32
-                    )
-                    img = img.reshape(
-                        IMAGE_SIZE[1],
-                        IMAGE_SIZE[0],
-                        3
-                    )
-                    img = img.permute(2, 0, 1)
-                    img = img / 255.0
-                    images.append(img)
-                    labels.append(label)
-                except Exception as e:
-                    print(f"Error reading {image_path}: {e}")
+
+        label = CLASS_MAP[class_name]
+        for img_name in tqdm(os.listdir(class_dir), desc=class_name, leave=False, colour="green"):
+            img_path = os.path.join(class_dir, img_name)
+            if not os.path.isfile(img_path):
+                continue
+
+            try:
+                img = Image.open(img_path).convert("RGB")
+                img = img.resize(IMAGE_SIZE)
+                img = torch.tensor(list(img.getdata()), dtype=torch.float32)
+                img = img.reshape(IMAGE_SIZE[1], IMAGE_SIZE[0], 3)
+                img = img.permute(2, 0, 1) / 255.0
+                images.append(img)
+                labels.append(label)
+            except Exception as e:
+                print(f"  Skipping {img_path}: {e}")
+
+    # shuffle
     data = list(zip(images, labels))
     random.shuffle(data)
     images, labels = zip(*data)
-    images = torch.stack(images)
-    labels = torch.tensor(labels, dtype=torch.long)
-    dataset = {
-        "images": images,
-        "labels": labels
-    }
-    torch.save(dataset, split + ".pt")
-    print(
-        f"{split}: "
-        f"images={images.shape}, "
-        f"labels={labels.shape}"
-    )
+
+    return torch.stack(images), torch.tensor(labels, dtype=torch.long)
+
+
+if __name__ == "__main__":
+    for split in os.listdir("DATASET"):
+        split_path = os.path.join("DATASET", split)
+        if not os.path.isdir(split_path):
+            continue
+
+        print(f"\nProcessing {split}...")
+        images, labels = load_and_convert(split_path)
+        torch.save({"images": images, "labels": labels}, f"{split}.pt")
+        print(f"  Saved {split}.pt — images={images.shape}, labels={labels.shape}")

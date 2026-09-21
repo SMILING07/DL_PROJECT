@@ -1,5 +1,4 @@
 /DATASET
 *.pt
 /__pycache__
-model.inf
-/MODELS
+/checkpoint
