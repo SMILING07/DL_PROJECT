@@ -143,7 +143,9 @@ model.load_state_dict(ckpt["model_state_dict"])
 
 ## Dataset
 
-Brain MRI images (224×224 RGB) from Kaggle, 4 balanced classes:
+**[Brain Tumor MRI Dataset](https://www.kaggle.com/datasets/masoudnickparvar/brain-tumor-mri-dataset)** by Masoud Nickparvar (CC BY 4.0)
+
+7,200 brain MRI images combined from figshare, SARTAJ, and Br35H datasets. Images are resized to 224×224 RGB.
 
 | Class | Train | Test |
 |---|---|---|
