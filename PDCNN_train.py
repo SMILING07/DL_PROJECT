@@ -143,7 +143,7 @@ class PDCNN(nn.Module):
     def predict(self, x: torch.Tensor) -> torch.Tensor:
         self.eval()
         x = x.to(DEVICE, non_blocking=True)
-        return torch.argmax(self.forward(x), dim=1)
+        return torch.argmax(self.forward(x), dim=1).cpu()
     
     # evaluation
     @torch.no_grad()
@@ -301,19 +301,10 @@ class PDCNN(nn.Module):
         # random brightness jitter ±10%
         x = x * (1.0 + (torch.rand(B, 1, 1, 1, device=x.device) - 0.5) * 0.2)
         return x.clamp(0, 1)
-    
+a = int(10,)
 if __name__ == "__main__":
     torch.cuda.empty_cache()
     # hyperparameters
-    '''
-    Tune these values as you wish,
-    batch_size should be selected based on your gpu vram
-    if 8gb vram: use 32
-    if 6gb vram: use 16 or 24
-    if 4gb vram: use 8
-    epochs and learning_rate can be tuned as your wish
-    NOTE: DO NOT CHANGE NUM_CLASSES as it contains the number of classes in our dataset
-    ''' 
     BATCH_SIZE = 32
     NUM_CLASSES = 4
     EPOCHS = 50

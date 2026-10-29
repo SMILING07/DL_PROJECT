@@ -1,4 +1,17 @@
-/DATASET
+# datasets (raw images + preprocessed tensors) — regenerate with DATASET/data_prep.py
+/DATASET/*
+!/DATASET/data_prep.py
 *.pt
-/__pycache__
-/checkpoint
+
+# checkpoints (large binaries — never push)
+pdcnn_checkpoint/
+vit_checkpoint/
+rvit_checkpoint/
+checkpoint/
+
+# old superseded stuff — never push
+old/
+
+# python
+__pycache__/
+*.pyc
