@@ -5,8 +5,8 @@ Three models classifying brain MRI scans into 4 classes: **glioma**, **meningiom
 | Model | Paper | Test accuracy | Params |
 |---|---|---|---|
 | PDCNN | Parallel Dilated CNN | **95.06%** | 12.6M |
-| ViT-B/32 | Asiri et al., Sensors 2023 (FT-ViT) | — (retrain pending) | 87.5M |
-| RViT-FusionNet | Islam et al., Neural Comput & Applic 2026 | — (retrain pending) | 128.5M |
+| ViT-B/32 | Asiri et al., Sensors 2023 (FT-ViT) | **93.81%** | 87.5M |
+| RViT-FusionNet | Islam et al., Neural Comput & Applic 2026 | **92.31%** | 128.5M |
 
 ---
 
